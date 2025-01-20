@@ -1,0 +1,60 @@
+name: Sync Fork and Merge Repos
+
+on:
+  schedule:
+    - cron: '0 0,12 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync-and-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # Step 0: Global Config
+      - name: Global Config
+        run: |
+          export GITHUB_USER=起个名字好难
+          echo "GITHUB_USER=$GITHUB_USER" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=${{ secrets.PAT }}" >> $GITHUB_ENV
+          git config --global user.email "github@gxenl.com"
+          git config --global user.name $GITHUB_USER
+
+      # Step 1: Checkout Fork Repository
+      - name: Checkout Fork Repository
+        uses: actions/checkout@v4.2.2
+        with:
+          repository: AutoMerge-CI/better-genshin-impact
+          ref: main
+
+      # Step 3: Add and Merge Other Repositories
+      - name: Add Other Repositories
+        run: |
+          git remote add repo1 https://github.com/mfkvfhpdx/better-genshin-impact.git
+          git remote add repo2 https://github.com/physligl/better-genshin-impact.git
+          git fetch repo1
+          git fetch repo2
+
+      - name: Merge Repo1
+        run: |
+          git merge repo1/main --allow-unrelated-histories -m "Merge from mfkvfhpdx"
+
+      - name: Merge Repo2
+        run: |
+          git merge repo2/main --allow-unrelated-histories -m "Merge from physligl"
+
+      # Step 4: Push Final Merged Changes to Fork
+      - name: Push Final Changes
+        run: |
+          git push origin main
+
+      # Step 2: Sync Fork with Upstream
+      - name: Add Upstream Repository
+        run: |
+          git remote add upstream https://github.com/babalae/better-genshin-impact.git
+          git fetch upstream
+          git merge upstream/main --allow-unrelated-histories -m "Sync with upstream"
+
+      - name: Push Changes to Fork
+        run: |
+          git push origin main
