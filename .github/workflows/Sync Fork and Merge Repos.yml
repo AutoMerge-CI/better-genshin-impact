@@ -27,6 +27,17 @@ jobs:
           repository: AutoMerge-CI/better-genshin-impact
           ref: main
 
+      # Step 2: Sync Fork with Upstream
+      - name: Add Upstream Repository
+        run: |
+          git remote add upstream https://github.com/babalae/better-genshin-impact.git
+          git fetch upstream
+          git merge upstream/main --allow-unrelated-histories -m "Sync with upstream"
+
+      - name: Push Changes to Fork
+        run: |
+          git push origin main
+
       # Step 3: Add and Merge Other Repositories
       - name: Add Other Repositories
         run: |
@@ -45,16 +56,5 @@ jobs:
 
       # Step 4: Push Final Merged Changes to Fork
       - name: Push Final Changes
-        run: |
-          git push origin main
-
-      # Step 2: Sync Fork with Upstream
-      - name: Add Upstream Repository
-        run: |
-          git remote add upstream https://github.com/babalae/better-genshin-impact.git
-          git fetch upstream
-          git merge upstream/main --allow-unrelated-histories -m "Sync with upstream"
-
-      - name: Push Changes to Fork
         run: |
           git push origin main
