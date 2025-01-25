@@ -27,6 +27,16 @@ jobs:
           repository: AutoMerge-CI/better-genshin-impact
           ref: main
 
+      # Step 3: Add and Merge Other Repositories
+      - name: Add Other Repositories
+        run: |
+          git remote add repo1 https://github.com/mfkvfhpdx/better-genshin-impact.git
+          git fetch repo1
+
+      - name: Merge Repo1
+        run: |
+          git merge repo1/main --allow-unrelated-histories -m "Merge from mfkvfhpdx"
+
       # Step 2: Sync Fork with Upstream
       - name: Add Upstream Repository
         run: |
@@ -38,15 +48,6 @@ jobs:
         run: |
           git push origin main
 
-      # Step 3: Add and Merge Other Repositories
-      - name: Add Other Repositories
-        run: |
-          git remote add repo1 https://github.com/mfkvfhpdx/better-genshin-impact.git
-          git fetch repo1
-
-      - name: Merge Repo1
-        run: |
-          git merge repo1/main --allow-unrelated-histories -m "Merge from mfkvfhpdx"
 
       # Step 4: Push Final Merged Changes to Fork
       - name: Push Final Changes
